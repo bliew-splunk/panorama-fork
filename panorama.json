@@ -1,11 +1,11 @@
 {
-    "appid": "3d88e427-0e61-4311-a613-bbddeac532e0",
-    "name": "Panorama",
-    "description": "This app integrates with the Palo Alto Networks Panorama product to support several containment and investigative actions",
+    "appid": "fdab3b9a-45ba-4789-aa1c-31df8109bc9e",
+    "name": "Panorama-DEV",
+    "description": "DEV/TEST USE ONLY. This app integrates with the Palo Alto Networks Panorama product to support several containment and investigative actions",
     "publisher": "Splunk",
     "type": "firewall",
     "main_module": "panorama_connector.py",
-    "app_version": "5.0.0",
+    "app_version": "5.0.3",
     "utctime_updated": "2022-01-27T22:10:12.000000Z",
     "package_name": "phantom_panorama",
     "product_vendor": "Palo Alto Networks",
@@ -15808,6 +15808,41 @@
                 "height": 5,
                 "title": "Create Address"
             },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get config",
+            "identifier": "get_config",
+            "description": "Get config by XPATH",
+            "verbose" : "See API documentation: https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/get-active-configuration/use-xpath-to-get-active-configuration",
+            "read_only": true,
+            "type": "investigate",
+            "parameters": {
+                "xpath": {
+                    "description": "XPATH of config to get",
+                    "data_type": "string",
+                    "order": 0,
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "panorama config xpath"
+                    ]
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.xml",
+                    "data_type": "string"
+                }
+            ],
             "versions": "EQ(*)"
         },
         {
