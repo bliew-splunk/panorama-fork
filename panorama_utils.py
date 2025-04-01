@@ -148,6 +148,24 @@ class PanoramaUtils:
 
         return consts.DEVICE_GRP_XPATH.format(formatted_device_entry_name=formatted_device_entry_name, device_group=device_group)
 
+
+    def _rest_get_config(self, xpath: str) -> str:
+        """Returns Config XML if successful or throws requests.exceptions.HTTPError"""
+        data = {"type": "config", "action": "get", "key": self._key, "xpath": xpath}
+
+        # Warning: PAN-OS API does expect a POST request even if you are getting config
+        # https://docs.paloaltonetworks.com/pan-os/10-1/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/get-candidate-configuration
+        response = requests.post(
+            self._connector.base_url,
+            data=data,
+            verify=self._connector.config.get("verify_server_cert", False),
+            timeout=consts.DEFAULT_TIMEOUT,
+        )
+        response.raise_for_status()
+        self._connector.save_progress(f"API Response: response={response} text={response.text}, headers={response.headers}")
+        assert "application/xml" in response.headers.get("Content-Type", "")
+        return response.text
+
     def _make_rest_call(self, data, action_result):
         """This function is used to make the REST call.
 

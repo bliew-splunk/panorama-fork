@@ -28,23 +28,11 @@ class GetConfig(BaseAction):
 
         xpath = self._param["xpath"]
 
-        data = {"type": "config", "action": "get", "key": connector.util._key, "xpath": xpath}
-
-        response = requests.post(
-            connector.base_url,
-            data=data,
-            verify=connector.config.get("verify_server_cert", False),
-            timeout=consts.DEFAULT_TIMEOUT,
-        )
         try:
-            response.raise_for_status()
+            xml = connector.util._rest_get_config(xpath=xpath)
         except requests.exceptions.HTTPError as e:
             return action_result.set_status(phantom.APP_ERROR,
                                             consts.PAN_ERROR_MESSAGE.format("get config", e))
-        connector.save_progress(f"API Response: {response}")
-        xml = response.text
-        connector.save_progress(f"API Response: text={xml}, headers={response.headers}")
-        assert "application/xml" in response.headers.get("Content-Type", "")
         try:
             ET.fromstring(xml)
         except ET.ParseError as e:
