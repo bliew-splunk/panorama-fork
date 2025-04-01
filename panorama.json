@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "firewall",
     "main_module": "panorama_connector.py",
-    "app_version": "5.0.7",
+    "app_version": "5.0.8",
     "utctime_updated": "2022-01-27T22:10:12.000000Z",
     "package_name": "phantom_panorama",
     "product_vendor": "Palo Alto Networks",
@@ -15883,6 +15883,42 @@
                 },
                 {
                     "data_path": "action_result.data.*.xml",
+                    "data_type": "string",
+                    "contains" : ["xml"]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "delete config",
+            "identifier": "delete_config",
+            "description": "Delete configuration",
+            "verbose" : "See API documentation: https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/delete-configuration",
+            "read_only": false,
+            "type": "investigate",
+            "parameters": {
+                "xpath": {
+                    "description": "XPATH of config to delete. Corresponds to API's xpath parameter",
+                    "data_type": "string",
+                    "order": 0,
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "panorama config xpath"
+                    ]
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.response_xml",
                     "data_type": "string",
                     "contains" : ["xml"]
                 }

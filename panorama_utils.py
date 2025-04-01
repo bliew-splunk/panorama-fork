@@ -150,8 +150,20 @@ class PanoramaUtils:
         return consts.DEVICE_GRP_XPATH.format(formatted_device_entry_name=formatted_device_entry_name, device_group=device_group)
 
 
-    def _rest_set_config(self, xpath: str, element: str) -> requests.Response:
-        data = {"type": "config", "action": "set", "key": self._key, "xpath": xpath, "element": element}
+    def _rest_set_config(self, xpath:str, element:str):
+        return self._rest_mutate_config(xpath=xpath, element=element, action="set")
+
+    def _rest_delete_config(self, xpath:str):
+        return self._rest_mutate_config(xpath=xpath, action="delete")
+
+    def _rest_mutate_config(self, xpath: str, action:str, element: str=None) -> requests.Response:
+        assert action in ["set", "delete"], f"Invalid action: {action}"
+        data = {"type": "config", "action": action, "key": self._key, "xpath": xpath}
+        if action == "set":
+            assert element is not None, "element param required"
+        if element:
+            data["element"] = element
+
         request_kwargs = {
             "url": self._connector.base_url,
             "data": data,
@@ -167,7 +179,7 @@ class PanoramaUtils:
         root = ElementTree.fromstring(response.text)
         assert root.tag == "response"
         if root.get("status", "").lower() == "error":
-            raise RuntimeError(f"Error setting config: {ElementTree.tostring(root)}")
+            raise RuntimeError(f"Error modifying config: {ElementTree.tostring(root)}")
         return response
 
     def _rest_get_config(self, xpath: str) -> str:
