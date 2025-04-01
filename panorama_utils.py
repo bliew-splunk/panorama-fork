@@ -21,6 +21,7 @@ import phantom.app as phantom
 import requests
 import xmltodict
 from phantom.action_result import ActionResult
+from xml.etree import ElementTree
 
 import panorama_consts as consts
 
@@ -148,6 +149,26 @@ class PanoramaUtils:
 
         return consts.DEVICE_GRP_XPATH.format(formatted_device_entry_name=formatted_device_entry_name, device_group=device_group)
 
+
+    def _rest_set_config(self, xpath: str, element: str) -> requests.Response:
+        data = {"type": "config", "action": "set", "key": self._key, "xpath": xpath, "element": element}
+        request_kwargs = {
+            "url": self._connector.base_url,
+            "data": data,
+            "verify": self._connector.config.get("verify_server_cert", False),
+            "timeout": consts.DEFAULT_TIMEOUT,
+        }
+        self._connector.save_progress(f"Making POST request with kwargs: {request_kwargs}")
+        response = requests.post(**request_kwargs)
+        response.raise_for_status()
+        self._connector.save_progress(f"API Response: response={response} text={response.text}, headers={response.headers}")
+        assert "application/xml" in response.headers.get("Content-Type", "")
+
+        root = ElementTree.fromstring(response.text)
+        assert root.tag == "response"
+        if root.get("status", "").lower() == "error":
+            raise RuntimeError(f"Error setting config: {ElementTree.tostring(root)}")
+        return response
 
     def _rest_get_config(self, xpath: str) -> str:
         """Returns Config XML if successful or throws requests.exceptions.HTTPError"""

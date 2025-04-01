@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "firewall",
     "main_module": "panorama_connector.py",
-    "app_version": "5.0.6",
+    "app_version": "5.0.7",
     "utctime_updated": "2022-01-27T22:10:12.000000Z",
     "package_name": "phantom_panorama",
     "product_vendor": "Palo Alto Networks",
@@ -15808,6 +15808,49 @@
                 "height": 5,
                 "title": "Create Address"
             },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "set config",
+            "identifier": "set_config",
+            "description": "Set configuration",
+            "verbose" : "See API documentation: https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/set-configuration",
+            "read_only": false,
+            "type": "investigate",
+            "parameters": {
+                "xpath": {
+                    "description": "XPATH of config to set. Corresponds to API's xpath parameter",
+                    "data_type": "string",
+                    "order": 0,
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "panorama config xpath"
+                    ]
+                },
+                "element": {
+                    "description": "XML to set. Corresponds to API's element parameter",
+                    "data_type": "string",
+                    "order": 1,
+                    "required": true,
+                    "primary": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.response_xml",
+                    "data_type": "string",
+                    "contains" : ["xml"]
+                }
+            ],
             "versions": "EQ(*)"
         },
         {
