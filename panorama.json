@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "firewall",
     "main_module": "panorama_connector.py",
-    "app_version": "5.0.3",
+    "app_version": "5.0.4",
     "utctime_updated": "2022-01-27T22:10:12.000000Z",
     "package_name": "phantom_panorama",
     "product_vendor": "Palo Alto Networks",
@@ -15840,7 +15840,56 @@
                 },
                 {
                     "data_path": "action_result.data.*.xml",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains" : ["xml"]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "filter xml",
+            "identifier": "filter_xml",
+            "description": "Locally filter/query XML",
+            "read_only": true,
+            "type": "investigate",
+            "parameters": {
+                "xml": {
+                    "description": "XML to filter",
+                    "data_type": "string",
+                    "order": 0,
+                    "required": true,
+                    "primary": true
+                },
+                "xpath": {
+                    "description": "XPATH to query given xml with. See supported syntax: https://docs.python.org/3/library/xml.etree.elementtree.html#supported-xpath-syntax",
+                    "data_type": "string",
+                    "order": 1,
+                    "required": true,
+                    "primary": false,
+                    "default" : "."
+                },
+                "attribute_filter": {
+                    "description": "JSON-encoded object mapping attribute name to a string. The resulting elements of the xpath query will be filtered where the given attribute contains the given string",
+                    "data_type": "string",
+                    "order": 2,
+                    "required": false,
+                    "primary": false,
+                    "default" : "{}"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.xml",
+                    "data_type": "string",
+                    "contains" : ["xml"]
                 }
             ],
             "versions": "EQ(*)"
