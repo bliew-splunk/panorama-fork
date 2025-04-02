@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "firewall",
     "main_module": "panorama_connector.py",
-    "app_version": "5.0.8",
+    "app_version": "5.0.9",
     "utctime_updated": "2022-01-27T22:10:12.000000Z",
     "package_name": "phantom_panorama",
     "product_vendor": "Palo Alto Networks",
@@ -15991,7 +15991,7 @@
                     "description": "Entry name prefix",
                     "data_type": "string",
                     "order": 1,
-                    "default" : "SPLUNK_IP",
+                    "default" : "Splunk_IP",
                     "required": true,
                     "primary": true
                 },
