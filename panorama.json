@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "firewall",
     "main_module": "panorama_connector.py",
-    "app_version": "5.0.9",
+    "app_version": "5.0.11",
     "utctime_updated": "2022-01-27T22:10:12.000000Z",
     "package_name": "phantom_panorama",
     "product_vendor": "Palo Alto Networks",
@@ -6824,6 +6824,47 @@
                 "height": 5,
                 "title": "Query"
             },
+            "versions": "EQ(*)"
+        },{
+            "action": "generic commit changes",
+            "description": "Commit configuration changes. See: https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/pan-os-xml-api-request-types/commit-configuration-api/commit",
+            "verbose": "This action supplements the related action 'commit changes' which acts on device groups.",
+            "type": "generic",
+            "identifier": "generic_commit_changes",
+            "read_only": false,
+            "parameters": {
+                "cmd": {
+                    "description": "Command XML",
+                    "data_type": "string",
+                    "order": 0,
+                    "required": true,
+                    "primary": true,
+                    "default": "<commit></commit>"
+                },
+                "action" : {
+                    "description": "Optional: set action parameter. Example: action=partial. https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/pan-os-xml-api-request-types/commit-configuration-api/commit",
+                    "data_type": "string",
+                    "order": 1,
+                    "required": false,
+                    "primary": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 1,
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.response_xml",
+                    "data_type": "string"
+                }
+            ],
             "versions": "EQ(*)"
         },
         {

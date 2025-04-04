@@ -150,19 +150,25 @@ class PanoramaUtils:
         return consts.DEVICE_GRP_XPATH.format(formatted_device_entry_name=formatted_device_entry_name, device_group=device_group)
 
 
-    def _rest_set_config(self, xpath:str, element:str):
+    def _rest_set_config(self, xpath:str, element:str) -> requests.Response:
         return self._rest_mutate_config(xpath=xpath, element=element, action="set")
 
-    def _rest_delete_config(self, xpath:str):
+    def _rest_delete_config(self, xpath:str) -> requests.Response:
         return self._rest_mutate_config(xpath=xpath, action="delete")
 
-    def _rest_mutate_config(self, xpath: str, action:str, element: str=None) -> requests.Response:
-        assert action in ["set", "delete"], f"Invalid action: {action}"
-        data = {"type": "config", "action": action, "key": self._key, "xpath": xpath}
-        if action == "set":
-            assert element is not None, "element param required"
-        if element:
-            data["element"] = element
+    def _rest_commit_changes(self, cmd:str, action:str=None) -> requests.Response:
+        data = {
+            "type": "commit",
+            "cmd" : cmd,
+        }
+        if action:
+            data["action"] = action
+        return self._rest_post_request(data=data)
+
+    def _rest_post_request(self, data: dict) -> requests.Response:
+        if "key" not in data:
+            data["key"] = self._key
+        assert data.get("key") is not None, "'key' is not set in data payload dict"
 
         request_kwargs = {
             "url": self._connector.base_url,
@@ -179,8 +185,18 @@ class PanoramaUtils:
         root = ElementTree.fromstring(response.text)
         assert root.tag == "response"
         if root.get("status", "").lower() == "error":
-            raise RuntimeError(f"Error modifying config: {ElementTree.tostring(root)}")
+            raise RuntimeError(f"API returned error in XML response: {ElementTree.tostring(root)}")
         return response
+
+    def _rest_mutate_config(self, xpath: str, action:str, element: str=None) -> requests.Response:
+        assert action in ["set", "delete"], f"Invalid action: {action}"
+        data = {"type": "config", "action": action, "xpath": xpath}
+        if action == "set":
+            assert element is not None, "element param required"
+        if element:
+            data["element"] = element
+        return self._rest_post_request(data=data)
+
 
     def _rest_get_config(self, xpath: str) -> str:
         """Returns Config XML if successful or throws requests.exceptions.HTTPError"""
